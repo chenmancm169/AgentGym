@@ -97,7 +97,8 @@ def get_state(env_idx: int):
     return StateResponse(url=url, html=html, instruction_text=instruction_text)
 
 
-@app.post("/reset", response_model=Tuple[str, None])
+@app.post("/reset", response_model=ResetResponse)
 def reset(reset_query: ResetQuery):
     print(reset_query)
-    return webshop_env_server.reset(reset_query.env_idx, reset_query.session_id)
+    obs, info = webshop_env_server.reset(reset_query.env_idx, reset_query.session_id)
+    return ResetResponse(observation=obs, info=info)

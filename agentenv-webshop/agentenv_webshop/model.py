@@ -8,11 +8,18 @@ class StepQuery(BaseModel):
     action: str
 
 
+
+from typing import Optional, Dict
+
 class StepResponse(BaseModel):
     state: str
     reward: float
     done: bool
-    info: None
+    info: Optional[Dict] = None
+
+class ResetResponse(BaseModel):
+    observation: str
+    info: dict
 
 
 class AvailableActionsResponse(BaseModel):

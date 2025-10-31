@@ -2,7 +2,7 @@ import json
 import time
 from dataclasses import dataclass, field
 
-import jsonlines
+# import jsonlines
 import transformers
 from tqdm import tqdm
 

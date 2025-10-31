@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 
 import jsonlines
 import transformers
+from agentenv.controller.env import ActionFormat
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
 
@@ -107,12 +108,24 @@ def main(args):
         raise ValueError(f"Unsupported task name: {args.task_name}")
 
     # set environment parameters
-    assert args["action_format"] in ("default", "function_calling", "code_as_action")
+    # Map action_format string to valid ActionFormat enum
+    ACTION_FORMAT_MAP = {
+        "default": ActionFormat.REACT,  # map 'default' to REACT
+        "react": ActionFormat.REACT,
+        "function_calling": ActionFormat.FUNCTION_CALLING,
+        "code_as_action": ActionFormat.CODE_AS_ACTION
+    }
+
+    action_format = args["action_format"].lower()
+    if action_format not in ACTION_FORMAT_MAP:
+        valid_formats = list(ACTION_FORMAT_MAP.keys())
+        raise ValueError(f"Invalid action_format '{action_format}'. Valid options: {valid_formats}")
+
     env_args = {
         "env_server_base": args["env_server_base"],
         "data_len": args["data_len"],
         "timeout": args["timeout"],
-        "action_format": args["action_format"],
+        "action_format": ACTION_FORMAT_MAP[action_format],
     }
 
     # set env client
